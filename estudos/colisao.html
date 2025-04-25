@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    canvas {
+      border: solid 1px black;
+
+    }
+  </style>
+</head>
+
+<body>
+  <canvas width="600" height="400">
+
+  </canvas>
+</body>
+<script>
+  // ---------DEFININDO VARIÁVEIS E OBJETOS---------
+
+  const canva = document.querySelector("canvas");
+  const contexto = canva.getContext("2d");
+
+  const UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+  let moveLeft = moveRight = moveUp = moveDown = false;
+
+  const size = 50;
+  const sizeBlock = 80;
+
+  let objectColor = "#00f"
+  const speed = 3;
+  const blockX = (canva.width/2) - sizeBlock/2;
+  const blockY = (canva.height/2) - sizeBlock/2;
+
+  let posicao = {
+    x: 10,
+    y: 10
+  };
+
+  // ---------FUNÇÃO RESPONSÁVEL PELA MOVIMENTAÇÃO---------
+  window.addEventListener("keydown", keydownHandler, false);
+  window.addEventListener("keyup", keyupHandler, false);
+
+  function keydownHandler(event) {
+    let key = event.keyCode;
+
+    if (key === LEFT && key !== RIGHT) moveLeft = true;
+    if (key === RIGHT && key !== LEFT) moveRight = true;
+    if (key === DOWN && key !== UP) moveDown = true;
+    if (key === UP && key !== DOWN) moveUp = true;
+
+  }
+
+  function keyupHandler(event) {
+    let key = event.keyCode;
+
+    if (key === LEFT && key !== RIGHT) moveLeft = false;
+    if (key === RIGHT && key !== LEFT) moveRight = false;
+    if (key === DOWN && key !== UP) moveDown = false;
+    if (key === UP && key !== DOWN) moveUp = false;
+  }
+
+  function move() {
+    if (moveLeft) {
+      posicao.x -= speed;
+    }
+    if (moveRight) {
+      posicao.x += speed;
+    }
+    if (moveDown) {
+      posicao.y += speed;
+    }
+    if (moveUp) {
+      posicao.y -= speed;
+    }
+  }
+
+  // ---------FUNCÃO RESPONSÁVEL PELA COLISÃO---------
+  function colide() {
+    if (posicao.x + size > blockX && posicao.x < blockX + sizeBlock && posicao.y + size > blockY && posicao.y < blockY + sizeBlock ){
+      objectColor = "#f00";
+    } else{
+      objectColor = "#00f";
+    }
+  }
+
+  // ---------FUNÇÃO DESENHAR NO CANVAS---------
+
+  function draw() {
+    contexto.clearRect(0,0, canva.width, canva.height)
+    contexto.fillStyle = "#000"
+    contexto.fillRect(posicao.x, posicao.y, size, size);
+
+    // criando bloco de colisão
+    contexto.fillStyle = objectColor;
+    contexto.fillRect(blockX, blockY, sizeBlock, sizeBlock )
+
+  }
+
+    
+  function update() {
+    move();
+    colide();
+  }
+
+  function loop() {
+    window.requestAnimationFrame(loop);
+    update();
+    draw();
+  }
+
+  loop()
+
+</script>
+
+</html>
