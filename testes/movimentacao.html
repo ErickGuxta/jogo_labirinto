@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: solid 1px black;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas width="600" height="400">
+
+    </canvas>
+</body>
+<script>
+    // -----------VARIÁVEIS-----------
+    // Codigos da teclas de movimentação
+    const UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
+    let moveLeft = moveRight = moveUp = moveDown = false;
+    const speed = 3;
+
+
+    // Criando canva e contexto
+    const canva = document.querySelector("canvas");
+    const contexto = canva.getContext("2d");
+
+    // Objeto para indicar a POSIÇÃO INCIAL e os atributos são os posicionamentos na tela
+    let p1 = {
+        x: 10,
+        y: 10
+    };
+
+    // Função Rederização na view
+    update()   
+
+    // -----------FUNÇÕES-----------
+
+    // Interação/movimentação usando teclado
+    window.addEventListener("keydown", keydownHandler);
+    window.addEventListener("keyup", keyupHandler);
+
+    function keydownHandler(event) {
+        let key = event.keyCode;
+        
+        if(key === LEFT && key !== RIGHT) moveLeft = true
+        if(key === RIGHT && key !== LEFT) moveRight = true
+        if(key === DOWN && key !== UP) moveDown = true
+        if(key === UP && key !== DOWN) moveUp = true
+
+    }
+
+    function keyupHandler(event) {
+        let key = event.keyCode;
+        
+        if(key === LEFT && key !== RIGHT) moveLeft = false
+        if(key === RIGHT && key !== LEFT) moveRight = false
+        if(key === DOWN && key !== UP) moveDown = false
+        if(key === UP && key !== DOWN) moveUp = false
+    }
+
+    function move() {
+        if (moveLeft) {
+            p1.x-=speed;
+        }
+        if (moveRight){
+            p1.x+=speed;
+        } 
+        if (moveDown){
+            p1.y+=speed;
+        } 
+        if (moveUp){
+            p1.y-=speed;
+        }
+    }
+
+    // Rederizar tela    
+    function render() {
+        contexto.clearRect (0,0,canva.width, canva.height);  //começa na origem (0,0) e depois expande para altura e largura do canva
+        contexto.fillRect(p1.x, p1.y, 50, 50);
+    }
+
+    // Atualizar tela automaticamente chamando o render() -> recursão
+    function update() {
+        requestAnimationFrame(update);
+        move();
+        render();
+    }
+
+
+</script>
+
+</html>
