@@ -20,11 +20,13 @@
 
     const block1 = new Sprite(500, 100, 50, 50, "#f00");
     sprites.push(block1);
+    blocks.push(block1);
 
     const block2 = new Sprite(200, 300, 100, 50, "#000");
     sprites.push(block2);
+    blocks.push(block2);
 
-    // Entradas (para movimentação)
+    // -----------Entradas (para movimentação)-----------
 
     window.addEventListener("keydown", keydownHandler, false);
     window.addEventListener("keyup", keyupHandler, false);
@@ -59,6 +61,14 @@
         character.posY = Math.max(0, Math.min(cnv.height - character.height, character.posY))
     }
 
+    // ----------Colisões-----------
+    for(const i in blocks){
+        let blk = blocks[i];
+        if (blk.visible) {
+            blockRect(character, blk);
+        }
+    }
+
     // Funções
     function loop() {
         window.requestAnimationFrame(loop);
@@ -66,7 +76,7 @@
         render();
     }
     function update() {
-        mover()
+        mover();
     }
 
     function render() {
@@ -74,10 +84,10 @@
 
         // for para facilitar a criação de novos elementos
         for (const i in sprites) {
-            let spr = sprites[i]; 
-            if (spr.visible) {
-                ctx.fillStyle = spr.color;
-                ctx.fillRect(spr.posX, spr.posY, spr.width, spr.height);
+            let spt = sprites[i]; 
+            if (spt.visible) {
+                ctx.fillStyle = spt.color;
+                ctx.fillRect(spt.posX, spt.posY, spt.width, spt.height);
             }
        }
     }
