@@ -1,14 +1,17 @@
 (function () {
-
     const cnv = document.querySelector("canvas");
     const ctx = cnv.getContext("2d");
-    const tileSize = 64;
-
 
     // Teclas
     const UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
     let moveLeft = moveRight = moveUp = moveDown = false;
 
+    //objeto imagem
+    var img = new Image();
+    img.src = "img/img.png";
+
+    var tileSize = 72;
+    var tileSrcSize = 96;
 
     // personagem OBS: CRIAR CLASSE DEPOIS
     let jogador = {
@@ -16,8 +19,9 @@
         posY: 34,
         width: tileSize - 30,
         height: tileSize - 30,
-        speed: 5
+        speed: 8
     }
+
     // paredes
     let walls = [];
 
@@ -34,17 +38,17 @@
         [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
         [1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1],
         [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1],
         [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1, 0, 1, 3, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1],
         [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1],
         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
         [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
         [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-
     ];
+
     // armazenar width e height do labirinto
     const width_labirinto = labirinto[0].length * tileSize;
     const height_labirinto = labirinto.length * tileSize;
@@ -112,18 +116,23 @@
 
     //Para desenhar os elementos na tela
     function render() {
-        ctx.clearRect(0, 0, cnv.width, cnv.height); // Limpar canva
+        ctx.clearRect(0, 0, cnv.width, cnv.height);
+        ctx.save();
+        ctx.translate(-camera.x, -camera.y);
 
-        ctx.save(); // Salva o contexto na memoria
+        // Desenhar labirinto
+        for (let row in labirinto) {
+            for (let column in labirinto[row]) {
+                let tile = labirinto[row][column];
+                let x = column * tileSize;
+                let y = row * tileSize;
 
-        // ajustando translação do contexto para funcionamento da camera
-        ctx.translate(-camera.x, -camera.y)
-
-        // --- DESENHANDO PAREDES --- 
-        ctx.fillStyle = "#000";
-        for (let i = 0; i < walls.length; i++) {
-            let wall = walls[i];
-            ctx.fillRect(wall.posX, wall.posY, wall.width, wall.height);
+                ctx.drawImage(
+                    img,
+                    tile * tileSrcSize, 0, tileSrcSize, tileSrcSize,
+                    x, y, tileSize, tileSize
+                );
+            }
         }
 
         // Personagem
@@ -211,7 +220,6 @@
         if (moveUp) jogador.posY -= jogador.speed;
     }
 
-    // Função Colizao
 
     //para atualizar
     function update() {
@@ -228,8 +236,14 @@
         requestAnimationFrame(loop, cnv);
     }
 
-    // Inciar jogo:
-    gerar_labiririnto();
-    requestAnimationFrame(loop, cnv);
+    // Event listeners
+    window.addEventListener("keydown", keydownHandler, false);
+    window.addEventListener("keyup", keyupHandler, false);
 
-})();  //vai ser executado automaticamante aop iniciar o html
+    // Iniciar o jogo quando a imagem carregar
+    img.addEventListener("load", function () {
+        gerar_labiririnto();
+        requestAnimationFrame(loop, cnv);
+    }, false);
+
+})();
