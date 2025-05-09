@@ -2,18 +2,21 @@
 
     const cnv = document.querySelector("canvas");
     const ctx = cnv.getContext("2d");
+    const tileSize = 64;
+
 
     // Teclas
     const UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39;
     let moveLeft = moveRight = moveUp = moveDown = false;
 
+
     // personagem OBS: CRIAR CLASSE DEPOIS
     let jogador = {
         posX: 34,
         posY: 34,
-        width: 28,
-        height: 28,
-        speed: 3
+        width: tileSize - 30,
+        height: tileSize - 30,
+        speed: 5
     }
     // paredes
     let walls = [];
@@ -42,6 +45,9 @@
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
     ];
+    // armazenar width e height do labirinto
+    const width_labirinto = labirinto[0].length * tileSize;
+    const height_labirinto = labirinto.length * tileSize;
 
     // Função para construir o labirinto
     function gerar_labiririnto() {
@@ -51,21 +57,67 @@
                 let element = labirinto[linha][coluna];
                 if (element === 1) {
                     let wall = {
-                        posX: coluna * 32,
-                        posY: linha * 32,
-                        width: 32,
-                        height: 32
+                        posX: coluna * tileSize,
+                        posY: linha * tileSize,
+                        width: tileSize,
+                        height: tileSize
                     }
                     walls.push(wall);
                 }
             }
         }
     }
+
+    // MOVIMENTAÇÃO CAMERA 
+    // -> esse objeto aqui ta criando os limites
+    const camera = {
+        x: 0,
+        y: 0,
+        width: cnv.width,
+        height: cnv.height,
+        // métodos que retornam codernada das fornteiras
+        innerLeftBoundary: function () {
+            return this.x + (this.width * 0.25)
+        },
+        innerTopBoundary: function () {
+            return this.y + (this.height * 0.25)
+        },
+        innerRightBoundary: function () {
+            return this.x + (this.width * 0.75)
+        },
+        innerBottomBoundary: function () {
+            return this.y + (this.height * 0.75)
+        }
+    }
+    // -> essa função faz os ajustes na tela
+    function movimentacao_camera() {
+        // Movimentação (ajustes da tela)
+        if (jogador.posX < camera.innerLeftBoundary()) {
+            camera.x = jogador.posX - (camera.width * 0.25);
+        }
+        if (jogador.posY < camera.innerTopBoundary()) {
+            camera.y = jogador.posY - (camera.height * 0.25);
+        }
+        if (jogador.posX + jogador.width > camera.innerRightBoundary()) {
+            camera.x = (jogador.posX + jogador.width) - (camera.width * 0.75);
+        }
+        if (jogador.posY + jogador.height > camera.innerBottomBoundary()) {
+            camera.y = (jogador.posY + jogador.height) - (camera.height * 0.75);
+        }
+
+        // Posição definitiva da camera
+        camera.x = Math.max(0, Math.min(width_labirinto - camera.width, camera.x));
+        camera.y = Math.max(0, Math.min(height_labirinto - camera.height, camera.y));
+    }
+
     //Para desenhar os elementos na tela
     function render() {
         ctx.clearRect(0, 0, cnv.width, cnv.height); // Limpar canva
 
         ctx.save(); // Salva o contexto na memoria
+
+        // ajustando translação do contexto para funcionamento da camera
+        ctx.translate(-camera.x, -camera.y)
 
         // --- DESENHANDO PAREDES --- 
         ctx.fillStyle = "#000";
@@ -87,6 +139,10 @@
             blockRectangle(jogador, wall);
         }
     }
+
+
+
+
     // DETECTAR COLISÃO
     function blockRectangle(objA, objB) {
         // Distância entre os centros dos objetos no eixo x 
@@ -122,7 +178,7 @@
             }
         }
     }
-    
+
     // -----------Entradas (para movimentação)-----------
 
     window.addEventListener("keydown", keydownHandler, false); //keydown é uma função que é disparada quando preciona uma tecla
@@ -161,6 +217,7 @@
     function update() {
         mover();
         colisao();
+        movimentacao_camera();
     }
 
 
