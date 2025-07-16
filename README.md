@@ -20,21 +20,13 @@ O jogo é um labirinto interativo em que o jogador precisa encontrar a saída. D
 
 # 📟Tecnologias utilizadas
 
-> HTML5 - Estrutura do jogo
-> 
-
-> CSS3 - Estilização visual do labirinto
-> 
-
-> JavaScript(puro) - Lógica do jogo, movimentação, detecção de colisão, exibição do quiz e controle de fazes
-> 
+> GameMaker Studio
 
 # 🎲Plano de Jogo
 
 ### ⚙️Mecânica Base:
 
-- [ ]  Estrutura HTML (canvas, quiz popup)
-- [ ]  Movimentação do personagem (setas do teclado)
+- [ ]  Movimentação do personagem (WASD do teclado)
 - [ ]  Detecção de colisão com paredes
 - [ ]  Detecção de encontro com personagem-obstáculo
 - [ ]  Sistema de quiz interativo (abrir pergunta e aguardar resposta)
@@ -46,12 +38,6 @@ O jogo é um labirinto interativo em que o jogador precisa encontrar a saída. D
 
 - [ ]  Animações e sprites personalizados
 - [ ]  Sistema de fases (labirintos diferentes e com dificuldade diferentes)
-- [ ]  Sistema de Brakepoints
 - [ ]  Sistema de pontuação
-- [ ]  Responsividade para celular/tablet
 
-# ❗Créditos
 
-Mapa criado baseando-se nas videos aulas dadas por Gustavo Silveira na playlist de vídeos "Criação da base para um jogo de labirinto com HTML5 e JavaScript #Pt.".
-
-Disponivel em: https://www.youtube.com/watch?v=ZbXwjuetzpo
